@@ -1,5 +1,7 @@
 import pygame
 from Player import Player
+import random
+import time
 
 pygame.init()
 
@@ -30,8 +32,12 @@ game=Game()
 
 
 #While pour maintenir la fenetre
-
+counter=time.time()
 while running:
+    
+    if time.time()-counter>1:
+        counter=time.time()
+        game.player.launch_bullet()
     print(game.pressed)
     print(game.player.rect.x)
     if (game.pressed.get(pygame.K_RIGHT) or game.pressed.get(pygame.K_d)) and game.player.rect.x<1300:
@@ -46,6 +52,9 @@ while running:
 
     #player display
     screen.blit(game.player.image, game.player.rect)
+
+    #bullet group display
+    game.player.all_bullets.draw(screen)
 
     #refresh screen
     pygame.display.flip()
