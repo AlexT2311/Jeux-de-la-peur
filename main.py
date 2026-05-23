@@ -1,5 +1,6 @@
 import pygame
 from Player import Player
+from bullet import bullet
 import random
 import time
 
@@ -15,6 +16,8 @@ class Game:
         self.pressed={}
 
 
+def game_over():
+    print("game over")
 
 
 
@@ -35,17 +38,22 @@ game=Game()
 counter=time.time()
 while running:
     
-    if time.time()-counter>1:
+    if time.time()-counter>0.5:
         counter=time.time()
         game.player.launch_bullet()
     print(game.pressed)
     print(game.player.rect.x)
+
+
+
     if (game.pressed.get(pygame.K_RIGHT) or game.pressed.get(pygame.K_d)) and game.player.rect.x<1300:
         print("Right/d")
         game.player.move_right()
     if (game.pressed.get(pygame.K_LEFT) or game.pressed.get(pygame.K_q)) and game.player.rect.x>0:
         print("Left/Q")
         game.player.move_left()
+    
+    
 
     #display bg
     screen.blit(background, (0,0))
@@ -59,6 +67,8 @@ while running:
     #refresh screen
     pygame.display.flip()
 
+
+
  
     for event in pygame.event.get():     #pygame event return une list de chaque event, la variale event c'est le dernier event
         if event.type == pygame.QUIT:
@@ -71,6 +81,13 @@ while running:
             game.pressed[event.key] = True
         elif event.type == pygame.KEYUP:
             game.pressed[event.key] = False
+
+    for bullet in game.player.all_bullets:
+        bullet.move()
+        bullet.bool_angle_bullets=True
+        if game.player.rect.y<bullet.rect.y+10 and game.player.rect.colliderect(bullet.rect):
+            game_over()
+            bullet.kill()
 
 
 

@@ -1,5 +1,6 @@
 import pygame
 from bullet import bullet
+
 #class player
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -27,5 +28,5 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.rect.x-self.velocity
 
     def launch_bullet(self):
-        new_bullet=bullet()
+        new_bullet=bullet(self)
         self.all_bullets.add(new_bullet)
