@@ -6,9 +6,14 @@ import time
 
 pygame.init()
 
+Resolutionx=1400
+Resolutiony=750
+Spawing_bullets_delay=1
+debug_mode=False
+
 #Frame creator
 pygame.display.set_caption("Les Jeux de la peur")
-screen=pygame.display.set_mode((1400,750))
+screen=pygame.display.set_mode((Resolutionx,Resolutiony))
 
 class Game:
     def __init__(self):
@@ -16,29 +21,23 @@ class Game:
         self.pressed={}
 
 
-def game_over():
-    print("game over")
-
-
-
+game=Game()
 
 background_original = pygame.image.load("BG.png")
-background = pygame.transform.scale(background_original, (1400, 750))
+background = pygame.transform.scale(background_original, (Resolutionx, Resolutiony))
 
 
 running=True
 
-#Game instance
 
-game=Game()
-
-
-
-#While pour maintenir la fenetre
 counter=time.time()
+
+
+
+
 while running:
     
-    if time.time()-counter>0.5:
+    if time.time()-counter>Spawing_bullets_delay:
         counter=time.time()
         game.player.launch_bullet()
     print(game.pressed)
@@ -46,31 +45,28 @@ while running:
 
 
 
-    if (game.pressed.get(pygame.K_RIGHT) or game.pressed.get(pygame.K_d)) and game.player.rect.x<1300:
-        print("Right/d")
+
+
+    if (game.pressed.get(pygame.K_RIGHT) or game.pressed.get(pygame.K_d)) and game.player.rect.x<Resolutionx-100:
         game.player.move_right()
     if (game.pressed.get(pygame.K_LEFT) or game.pressed.get(pygame.K_q)) and game.player.rect.x>0:
-        print("Left/Q")
         game.player.move_left()
     
     
-
-    #display bg
+    #Sprite Display
     screen.blit(background, (0,0))
-
-    #player display
     screen.blit(game.player.image, game.player.rect)
-
-    #bullet group display
     game.player.all_bullets.draw(screen)
 
-    #refresh screen
-    pygame.display.flip()
+    if debug_mode:
+        for bullet in game.player.all_bullets:
+            bullet.draw_debug(screen)
 
+        game.player.draw_debug(screen)
 
+    pygame.display.flip() #screen refreshing
 
- 
-    for event in pygame.event.get():     #pygame event return une list de chaque event, la variale event c'est le dernier event
+    for event in pygame.event.get():
         if event.type == pygame.QUIT:
 
             running=False
@@ -84,11 +80,14 @@ while running:
 
     for bullet in game.player.all_bullets:
         bullet.move()
-        bullet.bool_angle_bullets=True
         if game.player.rect.y<bullet.rect.y+10 and game.player.rect.colliderect(bullet.rect):
-            game_over()
-            bullet.kill()
+            print("collision")
+            running=False
+            pygame.quit()
+            print("Succesfully closed")
+            #À changer pour mettre un écran de fin
 
+pygame.quit()
 
 
 
