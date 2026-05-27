@@ -10,16 +10,19 @@ import numpy as np
 from PIL import Image, ImageSequence
 import pygame
 
-gif = Image.open("pixel.gif")
+
 
 
 pygame.init()
+pygame.mixer.init()
 
+
+pygame.mixer.music.load("Menu_music.mp3")
 Resolutionx=1400
 Resolutiony=750
 Spawing_bullets_delay=1
 debug_mode=False
-statement=0
+
 
 #Frame creator
 pygame.display.set_caption("Les Jeux de la peur")
@@ -33,16 +36,19 @@ class Game:
 
 game=Game()
 
-background_original = pygame.image.load("BG.png")
+background_original = pygame.image.load("BG.png").convert()
 background = pygame.transform.scale(background_original, (Resolutionx, Resolutiony))
+gif = Image.open("Menu_GIF.gif")
 
 
 running=True
 
 frames = []
 
+
 for frame in ImageSequence.Iterator(gif):
     frame = frame.convert("RGBA")  # important pour pygame
+
     pygame_image = pygame.image.fromstring(
         frame.tobytes(),
         frame.size,
@@ -58,6 +64,7 @@ frame_index = 0
 
 running = True
 on=True
+pygame.mixer.music.play(-1)
 
 while on==True and running:
 
@@ -65,12 +72,12 @@ while on==True and running:
         if event.type == pygame.QUIT:
             running = False
             pygame.quit()
+        elif event.type == pygame.KEYDOWN:
+            game.pressed[event.key] = True
+        elif event.type == pygame.KEYUP:
+            game.pressed[event.key] = False
     
-    for event in pygame.event.get():
-        if event.type == pygame.K_SPACE:
-            running=False
-            print("here")
-            on=False
+
 
 
     frame_index = (frame_index + 1) % len(frames)
@@ -81,7 +88,11 @@ while on==True and running:
     pygame.display.flip()
     time.sleep(0.025)
 
-    statement += 1
+
+    if game.pressed.get(pygame.K_SPACE):
+        on=False
+        running=False
+        pygame.mixer.music.stop()
 
 
 
@@ -89,13 +100,14 @@ while on==True and running:
 
 
 running=True
+pygame.mixer.music.load("Running_1.mp3")
+pygame.mixer.music.play(-1)
+
 while running :
     
     if time.time()-counter>Spawing_bullets_delay:
         counter=time.time()
         game.player.launch_bullet()
-    print(game.pressed)
-    print(game.player.rect.x)
 
 
 
@@ -135,31 +147,10 @@ while running :
     for bullet in game.player.all_bullets:
         bullet.move()
         if game.player.rect.y<bullet.rect.y+10 and game.player.rect.colliderect(bullet.rect):
-            print("collision")
+            pygame.mixer.music.stop()
             running=False
             pygame.quit()
             print("Succesfully closed")
             #À changer pour mettre un écran de fin
 
 pygame.quit()
-
-
-
-
-
-
-
-
-
-
-""" if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                print("Down/S")
-            elif event.key == pygame.K_LEFT or event.key == pygame.K_q:
-                print("Left/Q")
-                game.player.move_left()
-            elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                print("Right/d")
-                game.player.move_right()
-            elif event.key == pygame.K_UP or event.key == pygame.K_SPACE:
-                print("Up/Space")
-"""
