@@ -15,14 +15,16 @@ import pygame
 
 pygame.init()
 pygame.mixer.init()
+clock=pygame.time.Clock()
 
 
 pygame.mixer.music.load("Menu_music.mp3")
 Resolutionx=1400
 Resolutiony=750
-Spawing_bullets_delay=1
+Spawing_bullets_delay=0.2
 debug_mode=False
-
+dt=0
+IWV=0
 
 #Frame creator
 pygame.display.set_caption("Les Jeux de la peur")
@@ -68,6 +70,7 @@ pygame.mixer.music.play(-1)
 
 while on==True and running:
 
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -103,8 +106,9 @@ running=True
 pygame.mixer.music.load("Running_1.mp3")
 pygame.mixer.music.play(-1)
 
+On_move=False
 while running :
-    
+    IWV=IWV+1
     if time.time()-counter>Spawing_bullets_delay:
         counter=time.time()
         game.player.launch_bullet()
@@ -112,16 +116,37 @@ while running :
 
 
 
-
     if (game.pressed.get(pygame.K_RIGHT) or game.pressed.get(pygame.K_d)) and game.player.rect.x<Resolutionx-100:
         game.player.move_right()
+        
+        On_move=True
+        
+
     if (game.pressed.get(pygame.K_LEFT) or game.pressed.get(pygame.K_q)) and game.player.rect.x>0:
         game.player.move_left()
-    
-    
+        
+        On_move=True
+    if On_move==True:
+        dt=dt+1
+
+        if dt > 100:
+            screen.blit(game.player.image3, game.player.rect)
+            dt=0
+
+        else:
+            screen.blit(game.player.image2, game.player.rect)
+    else:
+        screen.blit(game.player.image1, game.player.rect)
+
+
+    pygame.display.flip()
+
+    On_move=False
+
+
+
     #Sprite Display
     screen.blit(background, (0,0))
-    screen.blit(game.player.image, game.player.rect)
     game.player.all_bullets.draw(screen)
 
     if debug_mode:
@@ -130,13 +155,12 @@ while running :
 
         game.player.draw_debug(screen)
 
-    pygame.display.flip() #screen refreshing
+
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
 
             running=False
-            pygame.quit()
             print("Succesfully closed")
 
         elif event.type == pygame.KEYDOWN:
@@ -149,8 +173,8 @@ while running :
         if game.player.rect.y<bullet.rect.y+10 and game.player.rect.colliderect(bullet.rect):
             pygame.mixer.music.stop()
             running=False
-            pygame.quit()
             print("Succesfully closed")
             #À changer pour mettre un écran de fin
+    clock.tick(120)
 
 pygame.quit()
