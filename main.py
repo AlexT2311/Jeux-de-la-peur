@@ -21,7 +21,7 @@ clock=pygame.time.Clock()
 pygame.mixer.music.load("Menu_music.mp3")
 Resolutionx=1400
 Resolutiony=750
-Spawing_bullets_delay=0.2
+Spawing_bullets_delay=0.5
 debug_mode=False
 dt=0
 IWV=0
