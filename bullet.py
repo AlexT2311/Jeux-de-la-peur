@@ -14,7 +14,7 @@ def _get_bullet_image():
 class bullet(pygame.sprite.Sprite):
     def __init__(self, player):
         super().__init__()
-        self.max_bullet_spawn_length = 1300
+        self.max_bullet_spawn_length = 2400
         self.velocity_y = 5
         self.player = player
         self.image = _get_bullet_image()  # référence partagée, pas de reload

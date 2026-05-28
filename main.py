@@ -6,6 +6,7 @@ import time
 import pygame
 from moviepy.editor import VideoFileClip
 import numpy as np
+from background import Background
 
 from PIL import Image, ImageSequence
 import pygame
@@ -20,8 +21,8 @@ clock=pygame.time.Clock()
 
 pygame.mixer.music.load("Menu_music.mp3")
 Resolutionx=1400
-Resolutiony=750
-Spawing_bullets_delay=0.5
+Resolutiony=768
+Spawing_bullets_delay=0.2
 debug_mode=False
 dt=0
 IWV=0
@@ -34,6 +35,7 @@ class Game:
     def __init__(self):
         self.player=Player()
         self.pressed={}
+        self.background=Background()
 
 
 game=Game()
@@ -62,6 +64,7 @@ for frame in ImageSequence.Iterator(gif):
 
 
 counter = time.time()
+
 frame_index = 0
 
 running = True
@@ -79,7 +82,7 @@ while on==True and running:
             game.pressed[event.key] = True
         elif event.type == pygame.KEYUP:
             game.pressed[event.key] = False
-    
+
 
 
 
@@ -102,12 +105,68 @@ while on==True and running:
 
 
 
+
+
+
+def Check_Wazowski_length_for_BG(L_R):
+    if game.player.rect.x<=10 and L_R== True:
+        #print("Impossible4")
+        return None
+    if game.player.rect.x>=Resolutionx-10 and L_R== False:
+        #print("Impossible2")
+        return None
+
+    
+    if game.background.rect.x>0 and L_R == True:
+        #print("Impossible1")
+        return None
+    if game.background.rect.x<-2490 and game.player.rect.x>Resolutionx-101 and L_R==False:
+        #print("Impossible3")
+        return None
+
+
+    
+    if game.player.rect.x >Resolutionx-200 and L_R== False:
+        game.background.rect.x=game.background.rect.x-game.player.velocity
+        for bullet in game.player.all_bullets:
+            bullet.rect.x=bullet.rect.x-game.player.velocity
+
+
+        #print("right back")
+        return None
+    
+    if game.player.rect.x < 200 and L_R== True:
+        game.background.rect.x=game.background.rect.x+game.player.velocity
+        for bullet in game.player.all_bullets:
+            bullet.rect.x=bullet.rect.x+game.player.velocity
+        #print("left back")
+        return None
+    
+    if L_R == True:
+        game.player.move_left()
+        #print("simple move L")
+        return None
+    
+    if L_R == False:
+        game.player.move_right()
+        #print("simple move R")
+        return None
+
+
 running=True
 pygame.mixer.music.load("Running_1.mp3")
 pygame.mixer.music.play(-1)
 
 On_move=False
+ticks=0
+fps=time.time()
 while running :
+    ticks=ticks+1
+    if time.time()-fps>1:
+        #print(ticks+1)
+        ticks=0
+        fps=time.time()
+
     IWV=IWV+1
     if time.time()-counter>Spawing_bullets_delay:
         counter=time.time()
@@ -116,16 +175,18 @@ while running :
 
 
 
-    if (game.pressed.get(pygame.K_RIGHT) or game.pressed.get(pygame.K_d)) and game.player.rect.x<Resolutionx-100:
-        game.player.move_right()
-        
+    if (game.pressed.get(pygame.K_RIGHT) or game.pressed.get(pygame.K_d)):
+        Check_Wazowski_length_for_BG(False)
+
         On_move=True
         
 
-    if (game.pressed.get(pygame.K_LEFT) or game.pressed.get(pygame.K_q)) and game.player.rect.x>0:
-        game.player.move_left()
-        
+    if (game.pressed.get(pygame.K_LEFT) or game.pressed.get(pygame.K_q)):
+        Check_Wazowski_length_for_BG(True)
         On_move=True
+
+
+
     if On_move==True:
         dt=dt+1
 
@@ -139,15 +200,18 @@ while running :
         screen.blit(game.player.image1, game.player.rect)
 
 
-    pygame.display.flip()
+
 
     On_move=False
+    pygame.display.flip()
 
 
 
     #Sprite Display
-    screen.blit(background, (0,0))
+    screen.blit(background,(0,0))
+    screen.blit(game.background.image, game.background.rect)
     game.player.all_bullets.draw(screen)
+
 
     if debug_mode:
         for bullet in game.player.all_bullets:
@@ -171,10 +235,10 @@ while running :
     for bullet in game.player.all_bullets:
         bullet.move()
         if game.player.rect.y<bullet.rect.y+10 and game.player.rect.colliderect(bullet.rect):
-            pygame.mixer.music.stop()
+            #pygame.mixer.music.stop()
             running=False
             print("Succesfully closed")
             #À changer pour mettre un écran de fin
-    clock.tick(120)
+    clock.tick(60)
 
 pygame.quit()
