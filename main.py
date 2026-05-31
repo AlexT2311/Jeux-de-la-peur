@@ -42,7 +42,7 @@ game=Game()
 
 background_original = pygame.image.load("BG.png").convert()
 background = pygame.transform.scale(background_original, (Resolutionx, Resolutiony))
-gif = Image.open("Menu_GIF.gif")
+gif = Image.open("Menu_GIF_2.gif")
 
 
 running=True
@@ -88,17 +88,16 @@ while on==True and running:
 
     frame_index = (frame_index + 1) % len(frames)
 
-    #screen.fill((0, 0, 0))  # optionnel
     screen.blit(frames[frame_index], (0, 0))
 
     pygame.display.flip()
-    time.sleep(0.025)
 
 
     if game.pressed.get(pygame.K_SPACE):
         on=False
         running=False
         pygame.mixer.music.stop()
+    clock.tick(30)
 
 
 
@@ -109,6 +108,8 @@ while on==True and running:
 
 
 def Check_Wazowski_length_for_BG(L_R):
+    #print(game.player.rect.x)
+    #print(game.background.rect.x)
     if game.player.rect.x<=10 and L_R== True:
         #print("Impossible4")
         return None
@@ -117,16 +118,16 @@ def Check_Wazowski_length_for_BG(L_R):
         return None
 
     
-    if game.background.rect.x>0 and L_R == True:
+    if game.background.rect.x>=0 and L_R == True and game.player.rect.x<=156:
         #print("Impossible1")
         return None
-    if game.background.rect.x<-2490 and game.player.rect.x>Resolutionx-101 and L_R==False:
+    if game.background.rect.x<-2490 and game.player.rect.x>Resolutionx-156 and L_R==False:
         #print("Impossible3")
         return None
 
 
     
-    if game.player.rect.x >Resolutionx-200 and L_R== False:
+    if game.player.rect.x >Resolutionx-150 and L_R== False:
         game.background.rect.x=game.background.rect.x-game.player.velocity
         for bullet in game.player.all_bullets:
             bullet.rect.x=bullet.rect.x-game.player.velocity
@@ -135,7 +136,7 @@ def Check_Wazowski_length_for_BG(L_R):
         #print("right back")
         return None
     
-    if game.player.rect.x < 200 and L_R== True:
+    if game.player.rect.x < 150 and L_R== True:
         game.background.rect.x=game.background.rect.x+game.player.velocity
         for bullet in game.player.all_bullets:
             bullet.rect.x=bullet.rect.x+game.player.velocity
@@ -184,21 +185,41 @@ while running :
     if (game.pressed.get(pygame.K_LEFT) or game.pressed.get(pygame.K_q)):
         Check_Wazowski_length_for_BG(True)
         On_move=True
+    
+    if game.pressed.get(pygame.K_l):
+        if debug_mode==True:
+            debug_mode=False
+        else:
+            debug_mode=True 
+        
+        
+
 
 
 
     if On_move==True:
+        
         dt=dt+1
+
+        if dt <=0 or dt>150:
+            screen.blit(game.player.image1, game.player.rect)
+
+
+        if dt > 50:
+            screen.blit(game.player.image2, game.player.rect)
 
         if dt > 100:
             screen.blit(game.player.image3, game.player.rect)
+
+        if dt>150:
+            screen.blit(game.player.image4, game.player.rect)
             dt=0
 
-        else:
-            screen.blit(game.player.image2, game.player.rect)
     else:
         screen.blit(game.player.image1, game.player.rect)
+    
 
+    
 
 
 

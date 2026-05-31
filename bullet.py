@@ -16,6 +16,7 @@ class bullet(pygame.sprite.Sprite):
         super().__init__()
         self.max_bullet_spawn_length = 2400
         self.velocity_y = 5
+        self.velocity_x = random.randint(-5,5)
         self.player = player
         self.image = _get_bullet_image()  # référence partagée, pas de reload
         self.rect = self.image.get_rect()
@@ -24,6 +25,7 @@ class bullet(pygame.sprite.Sprite):
 
     def move(self):
         self.rect.y += self.velocity_y
+        #self.rect.y += self.velocity_x
         if self.rect.y > 600:
             self.kill()  # retire de tous les groupes + libère la mémoire
 
