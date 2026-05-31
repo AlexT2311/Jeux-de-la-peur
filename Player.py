@@ -32,6 +32,38 @@ class Player(pygame.sprite.Sprite):
 
     def move_left(self):
         self.rect.x = self.rect.x-self.velocity
+    
+    def jump1(self):
+        #print("Jump 1:", self.rect.y)
+        self.rect.y = self.rect.y-30
+        #print(self.rect.y,"Jump 1")
+    def jump2(self):
+        #print("Jump 2:", self.rect.y)
+        self.rect.y = self.rect.y-20
+        #print("Jump 2:", self.rect.y)
+    def jump3(self):
+        #print("Jump 3:", self.rect.y)
+        self.rect.y = self.rect.y-10
+       # print(self.rect.y,"Jump 3")
+    def jump4(self):
+        #print("Jump 4:", self.rect.y)
+        self.rect.y = self.rect.y
+        #print(self.rect.y,"Jump 4")
+    def jump5(self):
+        #print("Jump 5:", self.rect.y)
+        self.rect.y = self.rect.y+10
+        #print(self.rect.y,"Jump 5")
+    def jump6(self):
+        #print("Jump 6:", self.rect.y)
+        self.rect.y = self.rect.y+20
+        #print(self.rect.y,"Jump 6")
+    def jump7(self):
+        #print("Jump 7:", self.rect.y)
+        self.rect.y = self.rect.y+30
+        #print(self.rect.y,"Jump 7")
+
+
+    
 
     def launch_bullet(self):
         new_bullet = bullet(self)

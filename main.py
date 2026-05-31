@@ -22,10 +22,11 @@ clock=pygame.time.Clock()
 pygame.mixer.music.load("Menu_music.mp3")
 Resolutionx=1400
 Resolutiony=768
-Spawing_bullets_delay=0.2
+Spawing_bullets_delay=4
 debug_mode=False
 dt=0
 IWV=0
+Jump_step=0
 
 #Frame creator
 pygame.display.set_caption("Les Jeux de la peur")
@@ -161,6 +162,7 @@ pygame.mixer.music.play(-1)
 On_move=False
 ticks=0
 fps=time.time()
+OJ=False
 while running :
     ticks=ticks+1
     if time.time()-fps>1:
@@ -191,8 +193,38 @@ while running :
             debug_mode=False
         else:
             debug_mode=True 
-        
-        
+    print(Jump_step)
+    if game.pressed.get(pygame.K_SPACE) and OJ==False:
+        Jump_step=1
+        OJ=True
+    
+    if Jump_step==13:
+            game.player.jump7()
+            Jump_step=0
+            OJ=False
+    if Jump_step==11:
+            game.player.jump6()
+            Jump_step=Jump_step+1
+    if Jump_step==9:
+            game.player.jump5()
+            Jump_step=Jump_step+1
+    if Jump_step==7:
+            game.player.jump4()
+            Jump_step=Jump_step+1
+    if Jump_step==5:
+            game.player.jump3()
+            Jump_step=Jump_step+1
+    if Jump_step==3:
+            game.player.jump2()
+            Jump_step=Jump_step+1
+    if Jump_step==1:
+            game.player.jump1()
+            Jump_step=Jump_step+1
+    if Jump_step==2 or  Jump_step==4 or Jump_step==6 or Jump_step==8 or Jump_step==10 or Jump_step==12:
+         Jump_step=Jump_step+1
+
+            
+
 
 
 
@@ -214,6 +246,8 @@ while running :
         if dt>150:
             screen.blit(game.player.image4, game.player.rect)
             dt=0
+        else:
+             screen.blit(game.player.image1, game.player.rect)
 
     else:
         screen.blit(game.player.image1, game.player.rect)
@@ -248,10 +282,13 @@ while running :
             running=False
             print("Succesfully closed")
 
+
         elif event.type == pygame.KEYDOWN:
             game.pressed[event.key] = True
         elif event.type == pygame.KEYUP:
             game.pressed[event.key] = False
+
+
 
     for bullet in game.player.all_bullets:
         bullet.move()
